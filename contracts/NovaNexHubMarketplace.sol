@@ -3,6 +3,7 @@
 pragma solidity ^0.8.19;
 
 import {ERC4907} from "./ERC4907.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 error NovaNexHub__PriceZero();
 error NovaNexHub__ValueLessThanListingFee();
@@ -16,7 +17,7 @@ error NovaNexHub__InsufficientValueForPriceAndMarketFee();
 error NovaNexHub__TransferPaymentFailed();
 error NovaNextHub__AlreadyOwnItem();
 
-contract NovaNexHubMarketplace is ERC4907 {
+contract NovaNexHubMarketplace is ReentrancyGuard {
     enum State {
         buy,
         rent
@@ -67,14 +68,7 @@ contract NovaNexHubMarketplace is ERC4907 {
         address indexed seller, uint256 indexed itemId, State state, uint256 price, address nftAddress, uint256 tokenId
     );
 
-    constructor(
-        address _feeAccount,
-        uint256 _feePercentage,
-        string memory _name,
-        string memory _symbol,
-        address _royaltyRecipient,
-        uint128 _royaltyBps
-    ) ERC4907(_name, _symbol, _royaltyRecipient, _royaltyBps) {
+    constructor(address _feeAccount, uint256 _feePercentage) {
         i_feeAccount = payable(_feeAccount);
         i_feePercentage = _feePercentage;
     }
@@ -84,6 +78,7 @@ contract NovaNexHubMarketplace is ERC4907 {
     function createItem(address _nft, uint256 _tokenId, uint256 _price, State _state, uint64 _duration)
         public
         payable
+        nonReentrant
     {
         _beforeCreatingItem(_price, _tokenId, _nft);
 
@@ -130,7 +125,7 @@ contract NovaNexHubMarketplace is ERC4907 {
         emit ItemCreated(msg.sender, _currentLength + 1, _price, _duration, _nft, _tokenId);
     }
 
-    function removeItem(uint256 _itemId) public {
+    function removeItem(uint256 _itemId) public nonReentrant {
         Item memory item = sellerToItems[msg.sender][_itemId - 1];
 
         if (item.seller != msg.sender) {
@@ -147,7 +142,7 @@ contract NovaNexHubMarketplace is ERC4907 {
         emit ItemRemoved(item.seller, _itemId, item.state, item.price, item.nft, item.tokenId);
     }
 
-    function purchaseItem(address _seller, uint256 _itemId) public payable {
+    function purchaseItem(address _seller, uint256 _itemId) public payable nonReentrant {
         Item memory item = sellerToItems[_seller][_itemId - 1];
         uint256 totalPrice = getTotalPrice(item.price);
         ERC4907 nftContract = ERC4907(item.nft);

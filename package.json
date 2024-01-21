@@ -19,5 +19,8 @@
     "hardhat": "^2.19.4",
     "hardhat-deploy": "^0.11.45",
     "solidity-coverage": "^0.8.5"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1"
   }
 }
