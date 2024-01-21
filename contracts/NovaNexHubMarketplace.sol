@@ -43,6 +43,7 @@ contract NovaNexHubMarketplace is ReentrancyGuard {
     uint256 private constant LISTING_FEE = 0.01 ether;
     uint64 private constant MINIMUM_RENT_PERIOD = 1 hours;
 
+    address[] public creators;
     mapping(address seller => Item[] items) public sellerToItems;
 
     event ItemCreated(
@@ -110,7 +111,7 @@ contract NovaNexHubMarketplace is ReentrancyGuard {
         sellerToItems[msg.sender][_currentLength] = Item({
             seller: msg.sender,
             itemId: _currentLength + 1,
-            owner: address(this), //WRONG
+            owner: _state == State.buy ? address(this) : msg.sender,
             user: nftContract.userOf(_tokenId),
             duration: _duration,
             expire: nftContract.userExpires(_tokenId),
@@ -120,6 +121,10 @@ contract NovaNexHubMarketplace is ReentrancyGuard {
             tokenId: _tokenId,
             sold: false
         });
+
+        if (_currentLength == 0) {
+            creators[creators.length] == msg.sender;
+        }
 
         //emit event
         emit ItemCreated(msg.sender, _currentLength + 1, _price, _duration, _nft, _tokenId);
@@ -137,7 +142,7 @@ contract NovaNexHubMarketplace is ReentrancyGuard {
 
         //delete item
         delete sellerToItems[msg.sender][_itemId - 1 ];
-
+        //eliminate creator if length becomes 0
         //emit
         emit ItemRemoved(item.seller, _itemId, item.state, item.price, item.nft, item.tokenId);
     }
@@ -172,6 +177,8 @@ contract NovaNexHubMarketplace is ReentrancyGuard {
         if (!feeSuccess || !priceSuccess) {
             revert NovaNexHub__TransferPaymentFailed();
         }
+
+        //eliminate creator if length becomes 0
 
         //emit
         emit ItemPurchased(msg.sender, item.seller, item.itemId, item.state, item.price, item.nft, item.tokenId);
@@ -223,6 +230,20 @@ contract NovaNexHubMarketplace is ReentrancyGuard {
 
     function getItem(address _seller, uint256 _itemId) external view returns (Item memory) {
         return sellerToItems[_seller][_itemId - 1];
+    }
+
+    function getItems(uint256 _length) external view returns (Item[] memory) {
+        Item[] memory items;
+        uint256 length = _length == 0 || _length > creators.length ? creators.length : _length;
+
+        for (uint256 i = 0; i < length; i++) {
+            Item[] memory creatorItems = sellerToItems[creators[i]];
+            for (uint256 o = 0; o < creatorItems.length; o++) {
+                items[items.length] = creatorItems[o];
+            }
+        }
+
+        return items;
     }
 
     function getListingFee() external pure returns (uint256) {

@@ -7,17 +7,16 @@
 const hre = require("hardhat");
 
 async function main() {
-  const feeAccount = hre.ethers.getSigner();
+  const feeAccount = (await hre.getNamedAccounts()).deployer;
   const feePercentage = 15;
-  const lock = await hre.ethers.deployContract("NovaNexHubMarketplace", [
+  const marketplace = await hre.ethers.deployContract("NovaNexHubMarketplace", [
     feeAccount,
     feePercentage,
-    "",
   ]);
 
-  await lock.waitForDeployment();
+  await marketplace.waitForDeployment();
 
-  console.log();
+  console.log("marketplace: ", marketplace);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
