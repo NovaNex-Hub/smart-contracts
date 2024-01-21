@@ -19,14 +19,10 @@ The inspiration behind NovaNex-Hub is rooted in the desire to unlock new possibi
 - **Secure Transactions:** Smart contracts and blockchain technology ensure secure and transparent transactions.
 - **Creator Empowerment:** Creators can effectively manage and monetize their digital assets.
 
-## Dependencies
 
-- ERC4907: Import from './ERC4907.sol' for NFT functionalities.
-- OpenZeppelin: ReentrancyGuard for protecting against reentrancy attacks.
 
 ## Installation
 
-Ensure you have a Solidity compiler (0.8.19) and necessary dependencies installed.
 
 ```bash
 npm install
