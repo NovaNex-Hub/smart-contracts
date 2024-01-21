@@ -3,6 +3,7 @@
 pragma solidity ^0.8.19;
 
 import {ERC4907} from "./ERC4907.sol";
+import "./NovaNexHubtoken.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 error NovaNexHub__PriceZero();
