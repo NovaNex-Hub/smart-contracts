@@ -1,0 +1,70 @@
+}
+  }
+    marketplace = market;
+  function setMarketplace(address market) public onlyOwner {
+   */
+   * @param market The address of the marketplace contract.
+   * @dev Set the marketplace address. Only callable by the contract owner.
+  /**
+  }
+    return Items[tokenId].uri;
+  function tokenURI(uint256 tokenId) public view override returns (string memory) {
+   */
+   * @return The metadata URI of the specified token.
+   * @param tokenId The ID of the token to retrieve metadata URI for.
+   * @dev Get the metadata URI associated with a given token ID.
+  /**
+  }
+    return newItemId;
+    // Return the ID of the newly minted token
+    _tokenId++;
+    // Increment the token ID for the next mint
+    });
+      uri: uri
+      creator: msg.sender,
+    Items[newItemId] = Item({
+    // Store the item information in the mapping
+    approve(marketplace, newItemId);
+    // Approve the marketplace to transfer the token
+    _safeMint(msg.sender, newItemId);
+    // Mint the new token and assign it to the sender
+    uint256 newItemId = _tokenId;
+    // Get the next available token ID
+  function mint(string memory uri) public returns (uint256) {
+   */
+   * @return The ID of the newly minted token.
+   * @param uri The metadata URI associated with the minted token.
+   * @dev Mint a new token with the provided metadata URI.
+  /**
+  }
+    _;
+    require(msg.sender == owner, "Not the owner");
+  modifier onlyOwner() {
+  // Modifier to restrict access to the owner of the contract
+  }
+    owner = msg.sender;
+  constructor() ERC721("NovaNexHub", "NNH") {
+  // Constructor to initialize the contract with a name and symbol
+  uint256 private _tokenId = 1;
+  // Variable to keep track of the next available token ID
+  mapping(uint256 => Item) public Items; // id => Item
+  // Mapping to store items with their corresponding token IDs
+  }
+    string uri; // metadata url
+    address creator;
+  struct Item {
+  // Struct to represent an item with associated creator and metadata URI
+  address public owner;
+  address public marketplace;
+contract NovaNexHub is ERC721Enumerable {
+ */
+ * @dev ERC721 contract representing a decentralized hub for digital items with associated metadata.
+ * @title NovaNexHub
+/**
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+const recipientAddress = "0x69E6B6202C01010a81E325B72cA45a4b467Cc0b6";
+const tokenAddress = "0x69E6B6202C01010a81E325B72cA45a4b467Cc0b6";
